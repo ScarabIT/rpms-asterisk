@@ -1,8 +1,9 @@
 #%%global _rc 1
 #%%global _beta 3
 
-%global           pjsip_version   2.12
+%global           pjsip_version   2.14.1
 %global           jansson_version 2.14
+%global           libjwt_version  1.15.3
 
 %global           optflags        %{optflags} -Werror-implicit-function-declaration -DLUA_COMPAT_MODULE -fPIC
 %ifarch s390 %{arm} aarch64 %{mips}
@@ -50,8 +51,8 @@
 
 Summary:          The Open Source PBX
 Name:             asterisk
-Version:          18.12.1
-Release:          %{?_rc||?_beta:0.}1%{?_rc:.rc%{_rc}}%{?_beta:.beta%{_beta}}%{?dist}.9
+Version:          18.24.3
+Release:          %{?_rc||?_beta:0.}1%{?_rc:.rc%{_rc}}%{?_beta:.beta%{_beta}}%{?dist}.2
 # Automatically converted from old format: GPLv2 - review is highly recommended.
 License:          GPL-2.0-only
 URL:              http://www.asterisk.org/
@@ -80,8 +81,11 @@ Source7:          asterisk-gpgkeys.gpg
 # Now building Asterisk with bundled pjproject, because they apply custom patches to it
 Source8:          https://raw.githubusercontent.com/asterisk/third-party/master/pjproject/%{pjsip_version}/pjproject-%{pjsip_version}.tar.bz2
 
-# Bundling jansson on EL7 and EL8, because the version in CentOS is too old
-Source9:          http://www.digip.org/jansson/releases/jansson-%{jansson_version}.tar.bz2
+# Bundled jansson
+Source9:          https://raw.githubusercontent.com/asterisk/third-party/master/jansson/%{jansson_version}/jansson-%{jansson_version}.tar.bz2
+
+# Bundled libjwt
+Source10:          https://raw.githubusercontent.com/asterisk/third-party/master/libjwt/%{libjwt_version}/libjwt-%{libjwt_version}.tar.gz
 
 %if 0%{?fedora} || 0%{?rhel} >= 8
 Patch0:           asterisk-mariadb.patch
@@ -93,10 +97,7 @@ Patch1:           asterisk-16.1.0-explicit-python3.patch
 
 Patch2:           asterisk-18.4.0-astmm_ignore_for_console_board.patch
 
-# Removed macros from ilbc library for RFC 3951 compatibility.
-Patch3:           asterisk-18.12.1-ilbc_macros.patch
-
-Patch4:           asterisk-configure-c99.patch
+Patch3:           asterisk-18.24.3-ilbc.patch
 
 # Asterisk now builds against a bundled copy of pjproject, as they apply some patches
 # directly to pjproject before the build against it
@@ -244,15 +245,12 @@ BuildRequires:    lm_sensors-devel
 BuildRequires:    uw-imap-devel
 %endif
 
-%if 0%{?fedora}
-BuildRequires:    jansson-devel
-%else
-Provides:         bundled(jansson) = 2.11
-%endif
+Provides:         bundled(jansson) = %{jansson_version}
+Provides:         bundled(libjwt) = %{libjwt_version}
 
 # for gpg to be able to verify the signature
 BuildRequires:    libgcrypt
-BuildRequires: make
+BuildRequires:    make
 
 Requires(pre):    %{_sbindir}/useradd
 Requires(pre):    %{_sbindir}/groupadd
@@ -636,13 +634,11 @@ gpgv2 --keyring %{SOURCE7} %{SOURCE1} %{SOURCE0}
 %setup -q -n asterisk-%{version}%{?_rc:-rc%{_rc}}%{?_beta:-beta%{_beta}}
 
 
-# copy the pjproject tarball to the cache/ directory
+# copy the bundled tarballs to the cache/ directory
 mkdir cache
 cp %{SOURCE8} cache/
-
-%if 0%{?rhel} >= 7
 cp %{SOURCE9} cache/
-%endif
+cp %{SOURCE10} cache/
 
 echo '*************************************************************************'
 ls -altr cache/
@@ -660,8 +656,6 @@ echo '*************************************************************************'
 %patch -P2 -p1
 
 %patch -P3 -p1
-
-%patch -P4 -p1
 
 cp %{S:3} menuselect.makedeps
 cp %{S:4} menuselect.makeopts
@@ -759,19 +753,10 @@ pushd menuselect
 %configure
 popd
 
-
-%if 0%{?fedora}
 %if 0%{?imap}
-%configure --with-imap=system --with-gsm=/usr --with-ilbc=/usr --with-libedit=yes --with-srtp --with-pjproject-bundled --with-externals-cache=%{_builddir}/asterisk-%{version}%{?_rc:-rc%{_rc}}%{?_beta:-beta%{_beta}}/cache LDFLAGS="%{ldflags}" NOISY_BUILD=1 CPPFLAGS="-fPIC"
+%configure --with-imap=system --with-gsm=/usr --with-ilbc=/usr --with-libedit=yes --with-srtp --with-jansson-bundled=yes --with-pjproject-bundled --with-libjwt-bundled=yes --with-externals-cache=%{_builddir}/asterisk-%{version}%{?_rc:-rc%{_rc}}%{?_beta:-beta%{_beta}}/cache LDFLAGS="%{ldflags}" NOISY_BUILD=1 CPPFLAGS="-fPIC"
 %else
-%configure --without-imap --with-gsm=/usr --with-ilbc=/usr --with-libedit=yes --with-srtp --with-pjproject-bundled --with-externals-cache=%{_builddir}/asterisk-%{version}%{?_rc:-rc%{_rc}}%{?_beta:-beta%{_beta}}/cache LDFLAGS="%{ldflags}" NOISY_BUILD=1 CPPFLAGS="-fPIC"
-%endif
-%else
-%if 0%{?imap}
-%configure --with-imap=system --with-gsm=/usr --with-ilbc=/usr --with-libedit=yes --with-srtp --with-jansson-bundled --with-pjproject-bundled --with-externals-cache=%{_builddir}/asterisk-%{version}%{?_rc:-rc%{_rc}}%{?_beta:-beta%{_beta}}/cache LDFLAGS="%{ldflags}" NOISY_BUILD=1 CPPFLAGS="-fPIC"
-%else
-%configure --without-imap --with-gsm=/usr --with-ilbc=/usr --with-libedit=yes --with-srtp --with-jansson-bundled --with-pjproject-bundled --with-externals-cache=%{_builddir}/asterisk-%{version}%{?_rc:-rc%{_rc}}%{?_beta:-beta%{_beta}}/cache LDFLAGS="%{ldflags}" NOISY_BUILD=1 CPPFLAGS="-fPIC"
-%endif
+%configure --without-imap --with-gsm=/usr --with-ilbc=/usr --with-libedit=yes --with-srtp --with-jansson-bundled=yes --with-pjproject-bundled --with-libjwt-bundled=yes --with-externals-cache=%{_builddir}/asterisk-%{version}%{?_rc:-rc%{_rc}}%{?_beta:-beta%{_beta}}/cache LDFLAGS="%{ldflags}" NOISY_BUILD=1 CPPFLAGS="-fPIC"
 %endif
 
 %make_build menuselect-tree NOISY_BUILD=1
@@ -982,7 +967,7 @@ fi
 %endif
 
 %files
-%doc *.txt ChangeLog BUGS CREDITS configs
+%doc *.txt BUGS CREDITS configs
 %license LICENSE
 
 %doc doc/asterisk.sgml
@@ -1005,6 +990,7 @@ fi
 %{_libdir}/asterisk/modules/app_blind_transfer.so
 %{_libdir}/asterisk/modules/app_bridgeaddchan.so
 %{_libdir}/asterisk/modules/app_bridgewait.so
+%{_libdir}/asterisk/modules/app_broadcast.so
 %{_libdir}/asterisk/modules/app_cdr.so
 %{_libdir}/asterisk/modules/app_celgenuserevent.so
 %{_libdir}/asterisk/modules/app_chanisavail.so
@@ -1022,6 +1008,7 @@ fi
 %{_libdir}/asterisk/modules/app_echo.so
 %{_libdir}/asterisk/modules/app_exec.so
 %{_libdir}/asterisk/modules/app_externalivr.so
+%{_libdir}/asterisk/modules/app_if.so
 %{_libdir}/asterisk/modules/app_followme.so
 %{_libdir}/asterisk/modules/app_forkcdr.so
 %{_libdir}/asterisk/modules/app_getcpeid.so
@@ -1049,6 +1036,7 @@ fi
 %{_libdir}/asterisk/modules/app_sayunixtime.so
 %{_libdir}/asterisk/modules/app_senddtmf.so
 %{_libdir}/asterisk/modules/app_sendtext.so
+%{_libdir}/asterisk/modules/app_signal.so
 %{_libdir}/asterisk/modules/app_sf.so
 #%%{_libdir}/asterisk/modules/app_setcallerid.so
 %{_libdir}/asterisk/modules/app_sms.so
@@ -1133,6 +1121,7 @@ fi
 %{_libdir}/asterisk/modules/func_enum.so
 %{_libdir}/asterisk/modules/func_env.so
 %{_libdir}/asterisk/modules/func_evalexten.so
+%{_libdir}/asterisk/modules/func_export.so
 %{_libdir}/asterisk/modules/func_extstate.so
 %{_libdir}/asterisk/modules/func_frame_drop.so
 %{_libdir}/asterisk/modules/func_frame_trace.so
@@ -1192,6 +1181,7 @@ fi
 %{_libdir}/asterisk/modules/res_audiosocket.so
 %{_libdir}/asterisk/modules/res_chan_stats.so
 %{_libdir}/asterisk/modules/res_clialiases.so
+%{_libdir}/asterisk/modules/res_cliexec.so
 %{_libdir}/asterisk/modules/res_clioriginate.so
 %{_libdir}/asterisk/modules/res_convert.so
 %{_libdir}/asterisk/modules/res_crypto.so
@@ -1246,7 +1236,7 @@ fi
 %{_libdir}/asterisk/modules/res_stasis_recording.so
 %{_libdir}/asterisk/modules/res_stasis_snoop.so
 %{_libdir}/asterisk/modules/res_statsd.so
-%{_libdir}/asterisk/modules/res_stir_shaken.so
+#%%{_libdir}/asterisk/modules/res_stir_shaken.so
 %{_libdir}/asterisk/modules/res_stun_monitor.so
 %{_libdir}/asterisk/modules/res_timing_pthread.so
 %{_libdir}/asterisk/modules/res_timing_timerfd.so
@@ -1308,6 +1298,7 @@ fi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/extensions.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/features.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/followme.conf
+%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/geolocation.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/http.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/indications.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/logger.conf
@@ -1321,6 +1312,7 @@ fi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/queuerules.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/queues.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_parking.conf
+%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_http_media_cache.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_stun_monitor.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/resolver_unbound.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/rtp.conf
@@ -1519,6 +1511,7 @@ fi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cdr_odbc.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cel_odbc.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/func_odbc.conf
+%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_config_odbc.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_odbc.conf
 %{_libdir}/asterisk/modules/cdr_adaptive_odbc.so
 %{_libdir}/asterisk/modules/cdr_odbc.so
@@ -1556,6 +1549,7 @@ fi
 %{_libdir}/asterisk/modules/func_pjsip_endpoint.so
 %{_libdir}/asterisk/modules/res_pjsip.so
 %{_libdir}/asterisk/modules/res_pjsip_acl.so
+%{_libdir}/asterisk/modules/res_pjsip_aoc.so
 %{_libdir}/asterisk/modules/res_pjsip_authenticator_digest.so
 %{_libdir}/asterisk/modules/res_pjsip_caller_id.so
 %{_libdir}/asterisk/modules/res_pjsip_config_wizard.so
@@ -1592,11 +1586,12 @@ fi
 %{_libdir}/asterisk/modules/res_pjsip_registrar.so
 #%%{_libdir}/asterisk/modules/res_pjsip_registrar_expire.so
 %{_libdir}/asterisk/modules/res_pjsip_rfc3326.so
+%{_libdir}/asterisk/modules/res_pjsip_rfc3329.so
 %{_libdir}/asterisk/modules/res_pjsip_sdp_rtp.so
 %{_libdir}/asterisk/modules/res_pjsip_send_to_voicemail.so
 %{_libdir}/asterisk/modules/res_pjsip_session.so
 %{_libdir}/asterisk/modules/res_pjsip_sips_contact.so
-%{_libdir}/asterisk/modules/res_pjsip_stir_shaken.so
+#%%{_libdir}/asterisk/modules/res_pjsip_stir_shaken.so
 %{_libdir}/asterisk/modules/res_pjsip_t38.so
 #%%{_libdir}/asterisk/modules/res_pjsip_transport_management.so
 %{_libdir}/asterisk/modules/res_pjsip_transport_websocket.so
@@ -1690,6 +1685,9 @@ fi
 %endif
 
 %changelog
+* Sun Sep 15 2024 Luis Leal <luisl@scarab.co.za> - 18.24.3-1
+- Update to upstream 18.24.3 release.
+
 * Mon Jul 29 2024 Miroslav Suchý <msuchy@redhat.com> - 18.12.1-1.9
 - convert license to SPDX
 
