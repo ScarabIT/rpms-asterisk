@@ -21,7 +21,6 @@
 %global           postgresql 1
 %global           radius     1
 %global           snmp       1
-%global           misdn      0
 %global           ldap       1
 %global           gmime      1
 %global           corosync   1
@@ -36,11 +35,9 @@
 %global           jack       1
 %endif
 %if 0%{?fedora} >= 28 || 0%{?rhel} >= 7
-%global           phone      0
 %global           xmpp       0
 %global           ices       0
 %else
-%global           phone      1
 %global           xmpp       1
 %global           ices       1
 %endif
@@ -51,8 +48,8 @@
 
 Summary:          The Open Source PBX
 Name:             asterisk
-Version:          18.24.3
-Release:          %{?_rc||?_beta:0.}1%{?_rc:.rc%{_rc}}%{?_beta:.beta%{_beta}}%{?dist}.2
+Version:          20.9.3
+Release:          %{?_rc||?_beta:0.}1%{?_rc:.rc%{_rc}}%{?_beta:.beta%{_beta}}%{?dist}.1
 # Automatically converted from old format: GPLv2 - review is highly recommended.
 License:          GPL-2.0-only
 URL:              http://www.asterisk.org/
@@ -86,10 +83,6 @@ Source9:          https://raw.githubusercontent.com/asterisk/third-party/master/
 
 # Bundled libjwt
 Source10:          https://raw.githubusercontent.com/asterisk/third-party/master/libjwt/%{libjwt_version}/libjwt-%{libjwt_version}.tar.gz
-
-%if 0%{?fedora} || 0%{?rhel} >= 8
-Patch0:           asterisk-mariadb.patch
-%endif
 
 %if 0%{?fedora} || 0%{?rhel} >=7
 Patch1:           asterisk-16.1.0-explicit-python3.patch
@@ -260,9 +253,9 @@ Requires(post):   systemd-sysv
 Requires(preun):  systemd-units
 Requires(postun): systemd-units
 
-
-# chan_phone headers no longer in kernel headers
 Obsoletes:        asterisk-phone < %{version}
+Obsoletes:        asterisk-misdn < %{version}
+Obsoletes:        asterisk-oss < %{version}
 
 %description
 Asterisk is a complete PBX in software. It runs on Linux and provides
@@ -406,16 +399,6 @@ Requires: asterisk = %{version}-%{release}
 LDAP resources for Asterisk.
 %endif
 
-%if 0%{?misdn}
-%package misdn
-Summary: mISDN channel for Asterisk
-Requires: asterisk = %{version}-%{release}
-Requires(pre): %{_sbindir}/usermod
-
-%description misdn
-mISDN channel for Asterisk.
-%endif
-
 %package mgcp
 Summary: MGCP channel driver for Asterisk
 Requires: asterisk = %{version}-%{release}
@@ -473,13 +456,6 @@ Requires: asterisk = %{version}-%{release}
 %description ooh323
 H.323 channel for Asterisk using the Objective Systems Open H.323 for C library.
 %endif
-
-%package oss
-Summary: Modules for Asterisk that use OSS sound drivers
-Requires: asterisk = %{version}-%{release}
-
-%description oss
-Modules for Asterisk that use OSS sound drivers.
 
 %package phone
 Summary: Channel driver for Quicknet Technologies, Inc.'s Telephony cards
@@ -645,10 +621,6 @@ ls -altr cache/
 pwd
 echo '*************************************************************************'
 
-%if 0%{?fedora} || 0%{?rhel} >=8
-%patch -P0 -p1
-%endif
-
 %if 0%{?fedora} || 0%{?rhel} >=7
 %patch -P1 -p1
 %endif
@@ -679,7 +651,7 @@ chmod -x contrib/scripts/dbsep.cgi
 %endif
 
 %if ! 0%{?mysql}
-%{__perl} -pi -e 's/^MENUSELECT_ADDONS=(.*)$/MENUSELECT_ADDONS=\1 res_config_mysql app_mysql cdr_mysql/g' menuselect.makeopts
+%{__perl} -pi -e 's/^MENUSELECT_ADDONS=(.*)$/MENUSELECT_ADDONS=\1 res_config_mysql /g' menuselect.makeopts
 %endif
 
 %if ! 0%{?postgresql}
@@ -695,10 +667,6 @@ chmod -x contrib/scripts/dbsep.cgi
 
 %if ! 0%{?snmp}
 %{__perl} -pi -e 's/^MENUSELECT_RES=(.*)$/MENUSELECT_RES=\1 res_snmp/g' menuselect.makeopts
-%endif
-
-%if ! 0%{?misdn}
-%{__perl} -pi -e 's/^MENUSELECT_CHANNELS=(.*)$/MENUSELECT_CHANNELS=\1 chan_misdn/g' menuselect.makeopts
 %endif
 
 %if ! 0%{?ices}
@@ -909,10 +877,6 @@ rm -f %{buildroot}%{_sysconfdir}/asterisk/res_ldap.conf
 rm -f %{buildroot}%{_sysconfdir}/asterisk/res_corosync.conf
 %endif
 
-%if ! 0%{?phone}
-rm -f %{buildroot}%{_sysconfdir}/asterisk/phone.conf
-%endif
-
 %if ! 0%{xmpp}
 rm -f %{buildroot}%{_sysconfdir}/asterisk/xmpp.conf
 rm -f %{buildroot}%{_sysconfdir}/asterisk/motif.conf
@@ -1012,13 +976,11 @@ fi
 %{_libdir}/asterisk/modules/app_followme.so
 %{_libdir}/asterisk/modules/app_forkcdr.so
 %{_libdir}/asterisk/modules/app_getcpeid.so
-%{_libdir}/asterisk/modules/app_image.so
 %{_libdir}/asterisk/modules/app_macro.so
 %{_libdir}/asterisk/modules/app_mf.so
 %{_libdir}/asterisk/modules/app_milliwatt.so
 %{_libdir}/asterisk/modules/app_mixmonitor.so
 %{_libdir}/asterisk/modules/app_morsecode.so
-%{_libdir}/asterisk/modules/app_nbscat.so
 %{_libdir}/asterisk/modules/app_originate.so
 %{_libdir}/asterisk/modules/app_page.so
 #%%{_libdir}/asterisk/modules/app_parkandannounce.so
@@ -1050,7 +1012,6 @@ fi
 %{_libdir}/asterisk/modules/app_talkdetect.so
 %{_libdir}/asterisk/modules/app_test.so
 %{_libdir}/asterisk/modules/app_transfer.so
-%{_libdir}/asterisk/modules/app_url.so
 %{_libdir}/asterisk/modules/app_userevent.so
 %{_libdir}/asterisk/modules/app_verbose.so
 %{_libdir}/asterisk/modules/app_waitforcond.so
@@ -1068,7 +1029,6 @@ fi
 %{_libdir}/asterisk/modules/cdr_csv.so
 %{_libdir}/asterisk/modules/cdr_custom.so
 %{_libdir}/asterisk/modules/cdr_manager.so
-%{_libdir}/asterisk/modules/cdr_syslog.so
 %{_libdir}/asterisk/modules/cel_custom.so
 %{_libdir}/asterisk/modules/cel_manager.so
 %{_libdir}/asterisk/modules/chan_audiosocket.so
@@ -1251,7 +1211,6 @@ fi
 %{_sbindir}/autosupport
 #%%{_sbindir}/check_expr
 #%%{_sbindir}/check_expr2
-%{_sbindir}/muted
 %{_sbindir}/rasterisk
 #%%{_sbindir}/refcounter
 %{_sbindir}/smsq
@@ -1281,7 +1240,6 @@ fi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cdr_beanstalkd.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cdr_custom.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cdr_manager.conf
-%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cdr_syslog.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cel.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cel_beanstalkd.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cel_custom.conf
@@ -1305,7 +1263,6 @@ fi
 %attr(0600,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/manager.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/modules.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/musiconhold.conf
-%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/muted.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/osp.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/phoneprov.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/prometheus.conf
@@ -1326,7 +1283,6 @@ fi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/telcordia-1.adsi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/udptl.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/users.conf
-%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/vpb.conf
 
 %config(noreplace) %{_sysconfdir}/logrotate.d/asterisk
 
@@ -1409,7 +1365,6 @@ fi
 %if 0%{?meetme} 
 %{_libdir}/asterisk/modules/app_meetme.so
 %endif
-%{_libdir}/asterisk/modules/app_dahdiras.so
 %{_libdir}/asterisk/modules/chan_dahdi.so
 %{_libdir}/asterisk/modules/codec_dahdi.so
 %{_libdir}/asterisk/modules/res_timing_dahdi.so
@@ -1473,12 +1428,6 @@ fi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/minivm.conf
 %{_libdir}/asterisk/modules/app_minivm.so
 
-%if 0%{misdn}
-%files misdn
-%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/misdn.conf
-%{_libdir}/asterisk/modules/chan_misdn.so
-%endif
-
 %files mgcp
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/mgcp.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_pktccops.conf
@@ -1491,12 +1440,8 @@ fi
 
 %if 0%{mysql}
 %files mysql
-%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/app_mysql.conf
-%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cdr_mysql.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_config_mysql.conf
 %doc contrib/realtime/mysql/*.sql
-%{_libdir}/asterisk/modules/app_mysql.so
-%{_libdir}/asterisk/modules/cdr_mysql.so
 %{_libdir}/asterisk/modules/res_config_mysql.so
 %endif
 
@@ -1526,16 +1471,6 @@ fi
 %files ooh323
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/ooh323.conf
 %{_libdir}/asterisk/modules/chan_ooh323.so
-%endif
-
-%files oss
-%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/oss.conf
-%{_libdir}/asterisk/modules/chan_oss.so
-
-%if 0%{phone}
-%files phone
-%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/phone.conf
-%{_libdir}/asterisk/modules/chan_phone.so
 %endif
 
 %files pjsip
@@ -1641,7 +1576,6 @@ fi
 %files sqlite
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cdr_sqlite3_custom.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cel_sqlite3_custom.conf
-%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_config_sqlite.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_config_sqlite3.conf
 %{_libdir}/asterisk/modules/cdr_sqlite3_custom.so
 %{_libdir}/asterisk/modules/cel_sqlite3_custom.so
@@ -7276,4 +7210,3 @@ http://downloads.asterisk.org/pub/telephony/asterisk/ChangeLog-1.8.3-rc2
 
 * Wed Jan 25 2006 Jeffrey C. Ollie <jeff@ocjtech.us> - 1.2.3-1
 - First version for Fedora Extras.
-
