@@ -49,7 +49,7 @@
 Summary:          The Open Source PBX
 Name:             asterisk
 Version:          20.9.3
-Release:          %{?_rc||?_beta:0.}1%{?_rc:.rc%{_rc}}%{?_beta:.beta%{_beta}}%{?dist}.1
+Release:          %{?_rc||?_beta:0.}1%{?_rc:.rc%{_rc}}%{?_beta:.beta%{_beta}}%{?dist}.2
 # Automatically converted from old format: GPLv2 - review is highly recommended.
 License:          GPL-2.0-only
 URL:              http://www.asterisk.org/
@@ -983,24 +983,20 @@ fi
 %{_libdir}/asterisk/modules/app_morsecode.so
 %{_libdir}/asterisk/modules/app_originate.so
 %{_libdir}/asterisk/modules/app_page.so
-#%%{_libdir}/asterisk/modules/app_parkandannounce.so
 %{_libdir}/asterisk/modules/app_playback.so
 %{_libdir}/asterisk/modules/app_playtones.so
 %{_libdir}/asterisk/modules/app_privacy.so
 %{_libdir}/asterisk/modules/app_queue.so
 %{_libdir}/asterisk/modules/app_readexten.so
-#%%{_libdir}/asterisk/modules/app_readfile.so
 %{_libdir}/asterisk/modules/app_read.so
 %{_libdir}/asterisk/modules/app_record.so
 %{_libdir}/asterisk/modules/app_reload.so
 %{_libdir}/asterisk/modules/app_saycounted.so
-#%%{_libdir}/asterisk/modules/app_saycountpl.so
 %{_libdir}/asterisk/modules/app_sayunixtime.so
 %{_libdir}/asterisk/modules/app_senddtmf.so
 %{_libdir}/asterisk/modules/app_sendtext.so
 %{_libdir}/asterisk/modules/app_signal.so
 %{_libdir}/asterisk/modules/app_sf.so
-#%%{_libdir}/asterisk/modules/app_setcallerid.so
 %{_libdir}/asterisk/modules/app_sms.so
 %{_libdir}/asterisk/modules/app_softhangup.so
 %{_libdir}/asterisk/modules/app_speech_utils.so
@@ -1033,7 +1029,6 @@ fi
 %{_libdir}/asterisk/modules/cel_manager.so
 %{_libdir}/asterisk/modules/chan_audiosocket.so
 %{_libdir}/asterisk/modules/chan_bridge_media.so
-#%%{_libdir}/asterisk/modules/chan_multicast_rtp.so
 %{_libdir}/asterisk/modules/chan_rtp.so
 %{_libdir}/asterisk/modules/codec_adpcm.so
 %{_libdir}/asterisk/modules/codec_alaw.so
@@ -1054,7 +1049,6 @@ fi
 %{_libdir}/asterisk/modules/format_h263.so
 %{_libdir}/asterisk/modules/format_h264.so
 %{_libdir}/asterisk/modules/format_ilbc.so
-#%%{_libdir}/asterisk/modules/format_jpeg.so
 %{_libdir}/asterisk/modules/format_ogg_speex.so
 %{_libdir}/asterisk/modules/format_ogg_vorbis.so
 %{_libdir}/asterisk/modules/format_pcm.so
@@ -1065,7 +1059,6 @@ fi
 %{_libdir}/asterisk/modules/format_wav_gsm.so
 %{_libdir}/asterisk/modules/format_wav.so
 %{_libdir}/asterisk/modules/func_aes.so
-#%%{_libdir}/asterisk/modules/func_audiohookinherit.so
 %{_libdir}/asterisk/modules/func_base64.so
 %{_libdir}/asterisk/modules/func_blacklist.so
 %{_libdir}/asterisk/modules/func_callcompletion.so
@@ -1178,7 +1171,6 @@ fi
 %{_libdir}/asterisk/modules/res_resolver_unbound.so
 %{_libdir}/asterisk/modules/res_rtp_asterisk.so
 %{_libdir}/asterisk/modules/res_rtp_multicast.so
-#%%{_libdir}/asterisk/modules/res_sdp_translator_pjmedia.so
 %{_libdir}/asterisk/modules/res_security_log.so
 %{_libdir}/asterisk/modules/res_smdi.so
 %{_libdir}/asterisk/modules/res_sorcery_astdb.so
@@ -1196,7 +1188,7 @@ fi
 %{_libdir}/asterisk/modules/res_stasis_recording.so
 %{_libdir}/asterisk/modules/res_stasis_snoop.so
 %{_libdir}/asterisk/modules/res_statsd.so
-#%%{_libdir}/asterisk/modules/res_stir_shaken.so
+%{_libdir}/asterisk/modules/res_stir_shaken.so
 %{_libdir}/asterisk/modules/res_stun_monitor.so
 %{_libdir}/asterisk/modules/res_timing_pthread.so
 %{_libdir}/asterisk/modules/res_timing_timerfd.so
@@ -1209,10 +1201,9 @@ fi
 %{_sbindir}/astman
 %{_sbindir}/astversion
 %{_sbindir}/autosupport
-#%%{_sbindir}/check_expr
-#%%{_sbindir}/check_expr2
+%{_sbindir}/check_expr
+%{_sbindir}/check_expr2
 %{_sbindir}/rasterisk
-#%%{_sbindir}/refcounter
 %{_sbindir}/smsq
 %{_sbindir}/stereorize
 %{_sbindir}/streamplayer
