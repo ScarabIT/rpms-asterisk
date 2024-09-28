@@ -1,4 +1,4 @@
-#%%global _rc 1
+%global _rc 2
 #%%global _beta 3
 
 %global           pjsip_version   2.14.1
@@ -48,8 +48,8 @@
 
 Summary:          The Open Source PBX
 Name:             asterisk
-Version:          20.9.3
-Release:          %{?_rc||?_beta:0.}1%{?_rc:.rc%{_rc}}%{?_beta:.beta%{_beta}}%{?dist}.2
+Version:          20.10.0
+Release:          %{?_rc||?_beta:0.}0%{?_rc:.rc%{_rc}}%{?_beta:.beta%{_beta}}%{?dist}.1
 # Automatically converted from old format: GPLv2 - review is highly recommended.
 License:          GPL-2.0-only
 URL:              http://www.asterisk.org/
@@ -1517,7 +1517,7 @@ fi
 %{_libdir}/asterisk/modules/res_pjsip_send_to_voicemail.so
 %{_libdir}/asterisk/modules/res_pjsip_session.so
 %{_libdir}/asterisk/modules/res_pjsip_sips_contact.so
-#%%{_libdir}/asterisk/modules/res_pjsip_stir_shaken.so
+%{_libdir}/asterisk/modules/res_pjsip_stir_shaken.so
 %{_libdir}/asterisk/modules/res_pjsip_t38.so
 #%%{_libdir}/asterisk/modules/res_pjsip_transport_management.so
 %{_libdir}/asterisk/modules/res_pjsip_transport_websocket.so
@@ -1610,6 +1610,9 @@ fi
 %endif
 
 %changelog
+* Sat Sep 28 2024 Luis Leal <luisl@scarab.co.za> - 20.10.0-0.rc2.1
+- Update to upstream 20.10.0-0.rc2.1 release.
+
 * Sun Sep 15 2024 Luis Leal <luisl@scarab.co.za> - 18.24.3-1
 - Update to upstream 18.24.3 release.
 
