@@ -52,10 +52,10 @@ Version:          20.10.0
 Release:          %{?_rc||?_beta:0.}0%{?_rc:.rc%{_rc}}%{?_beta:.beta%{_beta}}%{?dist}.1
 # Automatically converted from old format: GPLv2 - review is highly recommended.
 License:          GPL-2.0-only
-URL:              http://www.asterisk.org/
+URL:              https://www.asterisk.org/
 
-Source0:          http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-%{version}%{?_rc:-rc%{_rc}}%{?_beta:-beta%{_beta}}.tar.gz
-Source1:          http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-%{version}%{?_rc:-rc%{_rc}}%{?_beta:-beta%{_beta}}.tar.gz.asc
+Source0:          https://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-%{version}%{?_rc:-rc%{_rc}}%{?_beta:-beta%{_beta}}.tar.gz
+Source1:          https://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-%{version}%{?_rc:-rc%{_rc}}%{?_beta:-beta%{_beta}}.tar.gz.asc
 Source2:          asterisk-logrotate
 Source3:          menuselect.makedeps
 Source4:          menuselect.makeopts
