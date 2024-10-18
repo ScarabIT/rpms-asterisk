@@ -1,4 +1,4 @@
-%global _rc 2
+#%%global _rc 2
 #%%global _beta 3
 
 %global           pjsip_version   2.14.1
@@ -1610,6 +1610,9 @@ fi
 %endif
 
 %changelog
+* Fri Oct 18 2024 Luis Leal <luisl@scarab.co.za> - 20.10.0-0
+- Update to upstream 20.10.0 release.
+
 * Sat Sep 28 2024 Luis Leal <luisl@scarab.co.za> - 20.10.0-0.rc2.1
 - Update to upstream 20.10.0-0.rc2.1 release.
 
