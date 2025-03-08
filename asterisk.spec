@@ -1,7 +1,7 @@
 #%%global _rc 2
 #%%global _beta 3
 
-%global           pjsip_version   2.14.1
+%global           pjsip_version   2.15.1
 %global           jansson_version 2.14
 %global           libjwt_version  1.15.3
 
@@ -48,7 +48,7 @@
 
 Summary:          The Open Source PBX
 Name:             asterisk
-Version:          20.11.0
+Version:          20.12.0
 Release:          %{?_rc||?_beta:0.}1%{?_rc:.rc%{_rc}}%{?_beta:.beta%{_beta}}%{?dist}.1
 # Automatically converted from old format: GPLv2 - review is highly recommended.
 License:          GPL-2.0-only
