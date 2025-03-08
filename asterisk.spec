@@ -1108,6 +1108,7 @@ fi
 %{_libdir}/asterisk/modules/func_talkdetect.so
 %{_libdir}/asterisk/modules/func_timeout.so
 %{_libdir}/asterisk/modules/func_uri.so
+%{_libdir}/asterisk/modules/func_uuid.so
 %{_libdir}/asterisk/modules/func_version.so
 %{_libdir}/asterisk/modules/func_volume.so
 %{_libdir}/asterisk/modules/pbx_config.so
@@ -1610,6 +1611,9 @@ fi
 %endif
 
 %changelog
+* Sat Mar 08 2025 Luis Leal <luisl@scarab.co.za> - 20.12.0-1
+- Update to upstream 20.12.0 release.
+
 * Fri Dec 27 2024 Luis Leal <luisl@scarab.co.za> - 20.11.0-1
 - Update to upstream 20.11.0 release.
 
