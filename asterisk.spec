@@ -1,8 +1,8 @@
 #%%global _rc 2
 #%%global _beta 3
 
-%global           pjsip_version   2.15.1
-%global           jansson_version 2.14
+%global           pjsip_version   2.17
+%global           jansson_version 2.15.0
 %global           libjwt_version  1.15.3
 
 %global           optflags        %{optflags} -Werror-implicit-function-declaration -DLUA_COMPAT_MODULE -fPIC
@@ -48,7 +48,7 @@
 
 Summary:          The Open Source PBX
 Name:             asterisk
-Version:          20.12.0
+Version:          20.20.0
 Release:          %{?_rc||?_beta:0.}1%{?_rc:.rc%{_rc}}%{?_beta:.beta%{_beta}}%{?dist}.1
 # Automatically converted from old format: GPLv2 - review is highly recommended.
 License:          GPL-2.0-only
@@ -1002,6 +1002,7 @@ fi
 %{_libdir}/asterisk/modules/app_speech_utils.so
 %{_libdir}/asterisk/modules/app_stack.so
 %{_libdir}/asterisk/modules/app_stasis.so
+%{_libdir}/asterisk/modules/app_stasis_broadcast.so
 %{_libdir}/asterisk/modules/app_statsd.so
 %{_libdir}/asterisk/modules/app_stream_echo.so
 %{_libdir}/asterisk/modules/app_system.so
@@ -1030,6 +1031,7 @@ fi
 %{_libdir}/asterisk/modules/chan_audiosocket.so
 %{_libdir}/asterisk/modules/chan_bridge_media.so
 %{_libdir}/asterisk/modules/chan_rtp.so
+%{_libdir}/asterisk/modules/chan_websocket.so
 %{_libdir}/asterisk/modules/codec_adpcm.so
 %{_libdir}/asterisk/modules/codec_alaw.so
 %{_libdir}/asterisk/modules/codec_a_mu.so
@@ -1133,6 +1135,7 @@ fi
 %{_libdir}/asterisk/modules/res_ari_recordings.so
 %{_libdir}/asterisk/modules/res_ari_sounds.so
 %{_libdir}/asterisk/modules/res_audiosocket.so
+%{_libdir}/asterisk/modules/res_cdrel_custom.so
 %{_libdir}/asterisk/modules/res_chan_stats.so
 %{_libdir}/asterisk/modules/res_clialiases.so
 %{_libdir}/asterisk/modules/res_cliexec.so
@@ -1184,6 +1187,7 @@ fi
 %{_libdir}/asterisk/modules/res_srtp.so
 %{_libdir}/asterisk/modules/res_stasis.so
 %{_libdir}/asterisk/modules/res_stasis_answer.so
+%{_libdir}/asterisk/modules/res_stasis_broadcast.so
 %{_libdir}/asterisk/modules/res_stasis_device_state.so
 %{_libdir}/asterisk/modules/res_stasis_playback.so
 %{_libdir}/asterisk/modules/res_stasis_recording.so
@@ -1194,6 +1198,7 @@ fi
 %{_libdir}/asterisk/modules/res_timing_pthread.so
 %{_libdir}/asterisk/modules/res_timing_timerfd.so
 %{_libdir}/asterisk/modules/res_tonedetect.so
+%{_libdir}/asterisk/modules/res_websocket_client.so
 
 %{_sbindir}/astcanary
 %{_sbindir}/astdb2sqlite3
@@ -1235,6 +1240,7 @@ fi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cel.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cel_beanstalkd.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cel_custom.conf
+%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/chan_websocket.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cli.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cli_aliases.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/cli_permissions.conf
@@ -1275,6 +1281,7 @@ fi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/telcordia-1.adsi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/udptl.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/users.conf
+%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/websocket_client.conf
 
 %config(noreplace) %{_sysconfdir}/logrotate.d/asterisk
 
@@ -1492,6 +1499,7 @@ fi
 %{_libdir}/asterisk/modules/res_pjsip_header_funcs.so
 %{_libdir}/asterisk/modules/res_pjsip_history.so
 %{_libdir}/asterisk/modules/res_pjsip_logger.so
+%{_libdir}/asterisk/modules/res_pjsip_maintenance.so
 %{_libdir}/asterisk/modules/res_pjsip_messaging.so
 #%%{_libdir}/asterisk/modules/res_pjsip_multihomed.so
 %{_libdir}/asterisk/modules/res_pjsip_mwi.so
@@ -1611,6 +1619,9 @@ fi
 %endif
 
 %changelog
+* Tue Jun 16 2026 Luis Leal <luisl@scarab.co.za> - 20.20.0-1
+- Update to upstream 20.20.0 release.
+
 * Sat Mar 08 2025 Luis Leal <luisl@scarab.co.za> - 20.12.0-1
 - Update to upstream 20.12.0 release.
 
