@@ -49,7 +49,7 @@
 Summary:          The Open Source PBX
 Name:             asterisk
 Version:          20.20.0
-Release:          %{?_rc||?_beta:0.}1%{?_rc:.rc%{_rc}}%{?_beta:.beta%{_beta}}%{?dist}.1
+Release:          2%{?dist}
 # Automatically converted from old format: GPLv2 - review is highly recommended.
 License:          GPL-2.0-only
 URL:              https://www.asterisk.org/
@@ -137,6 +137,7 @@ BuildRequires:    latex2html
 BuildRequires:    neon-devel
 BuildRequires:    libical-devel
 BuildRequires:    libxml2-devel
+BuildRequires:    libxslt-devel
 
 # for codec_speex
 BuildRequires:    speex-devel >= 1.2
@@ -1153,6 +1154,7 @@ fi
 %{_libdir}/asterisk/modules/res_format_attr_siren14.so
 %{_libdir}/asterisk/modules/res_format_attr_siren7.so
 %{_libdir}/asterisk/modules/res_format_attr_vp8.so
+%{_libdir}/asterisk/modules/res_geolocation.so
 %{_libdir}/asterisk/modules/res_http_media_cache.so
 %if 0%{?gmime}
 %{_libdir}/asterisk/modules/res_http_post.so
@@ -1496,6 +1498,7 @@ fi
 %{_libdir}/asterisk/modules/res_pjsip_endpoint_identifier_ip.so
 %{_libdir}/asterisk/modules/res_pjsip_endpoint_identifier_user.so
 %{_libdir}/asterisk/modules/res_pjsip_exten_state.so
+%{_libdir}/asterisk/modules/res_pjsip_geolocation.so
 %{_libdir}/asterisk/modules/res_pjsip_header_funcs.so
 %{_libdir}/asterisk/modules/res_pjsip_history.so
 %{_libdir}/asterisk/modules/res_pjsip_logger.so
