@@ -49,7 +49,7 @@
 Summary:          The Open Source PBX
 Name:             asterisk
 Version:          20.20.0
-Release:          2%{?dist}
+Release:          3%{?dist}
 # Automatically converted from old format: GPLv2 - review is highly recommended.
 License:          GPL-2.0-only
 URL:              https://www.asterisk.org/
@@ -470,6 +470,7 @@ LineJACK, Internet PhoneCARD and SmartCABLE.
 %package pjsip
 Summary: SIP channel based upon the PJSIP library
 Requires: asterisk = %{version}-%{release}
+Requires: asterisk-curl = %{version}-%{release}
 
 %description pjsip
 SIP channel based upon the PJSIP library
@@ -1155,7 +1156,6 @@ fi
 %{_libdir}/asterisk/modules/res_format_attr_siren7.so
 %{_libdir}/asterisk/modules/res_format_attr_vp8.so
 %{_libdir}/asterisk/modules/res_geolocation.so
-%{_libdir}/asterisk/modules/res_http_media_cache.so
 %if 0%{?gmime}
 %{_libdir}/asterisk/modules/res_http_post.so
 %endif
@@ -1195,7 +1195,6 @@ fi
 %{_libdir}/asterisk/modules/res_stasis_recording.so
 %{_libdir}/asterisk/modules/res_stasis_snoop.so
 %{_libdir}/asterisk/modules/res_statsd.so
-%{_libdir}/asterisk/modules/res_stir_shaken.so
 %{_libdir}/asterisk/modules/res_stun_monitor.so
 %{_libdir}/asterisk/modules/res_timing_pthread.so
 %{_libdir}/asterisk/modules/res_timing_timerfd.so
@@ -1269,7 +1268,6 @@ fi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/queuerules.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/queues.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_parking.conf
-%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_http_media_cache.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_stun_monitor.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/resolver_unbound.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/rtp.conf
@@ -1279,7 +1277,6 @@ fi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/sorcery.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/stasis.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/statsd.conf
-%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/stir_shaken.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/telcordia-1.adsi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/udptl.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/users.conf
@@ -1354,9 +1351,13 @@ fi
 %doc contrib/scripts/dbsep.cgi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/dbsep.conf
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_curl.conf
+%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/res_http_media_cache.conf
+%attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/stir_shaken.conf
 %{_libdir}/asterisk/modules/func_curl.so
 %{_libdir}/asterisk/modules/res_config_curl.so
 %{_libdir}/asterisk/modules/res_curl.so
+%{_libdir}/asterisk/modules/res_http_media_cache.so
+%{_libdir}/asterisk/modules/res_stir_shaken.so
 
 %files dahdi
 %attr(0640,asterisk,asterisk) %config(noreplace) %{_sysconfdir}/asterisk/meetme.conf
