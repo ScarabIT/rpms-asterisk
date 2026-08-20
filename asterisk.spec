@@ -48,8 +48,8 @@
 
 Summary:          The Open Source PBX
 Name:             asterisk
-Version:          20.20.0
-Release:          3%{?dist}
+Version:          20.20.1
+Release:          1%{?dist}
 # Automatically converted from old format: GPLv2 - review is highly recommended.
 License:          GPL-2.0-only
 URL:              https://www.asterisk.org/
@@ -1623,6 +1623,9 @@ fi
 %endif
 
 %changelog
+* Thu Aug 20 2026 Luis Leal <luisl@scarab.co.za> - 20.20.1-1
+- Update to upstream 20.20.1 release.
+
 * Tue Jun 16 2026 Luis Leal <luisl@scarab.co.za> - 20.20.0-1
 - Update to upstream 20.20.0 release.
 
